@@ -72,6 +72,7 @@ function TodoForm({getTodoList,setTodoList}) {
   const handleStatus=async(e)=>{
     
     const getStatusVal=e.target.value;
+    setSelectedOption(getStatusVal)
         if(getStatusVal=='all'){
             getTodoList()
         }else{
@@ -79,6 +80,8 @@ function TodoForm({getTodoList,setTodoList}) {
                 Authorization:`Bearer ${token}`
             }})
             .then((response) => {
+                
+                
                  if(response.data.success==false){  
                     setTodoList({}) 
                  }else{

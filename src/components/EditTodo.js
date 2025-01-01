@@ -13,6 +13,7 @@ function EditModal({itemData,getTodoList}) {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [error,setError]=useState('');
+  const [text, setText] = useState(itemData.description);
   const initialFormData = {
     title: "",
     description: "",
@@ -28,7 +29,7 @@ function EditModal({itemData,getTodoList}) {
   };
 
   const todoUpdate=async(event)=>{
-    
+    console.log(text)
     event.preventDefault()
     await axios.put(`${constants.baseURL}${TODO_UPDATE}${itemData._id}`,todoData,{headers:{
         Authorization:`Bearer ${token}`
@@ -45,6 +46,10 @@ function EditModal({itemData,getTodoList}) {
         });
 
   }
+  const handleChanges = (event) => {
+    setText(event.target.value);
+  };
+
 useEffect(()=>{
     setTodoData(itemData)
 },[])
@@ -67,7 +72,6 @@ useEffect(()=>{
                 name='title'
                 type="text"
                 onChange={handleChange}
-                
               />
             </Form.Group>
             <Form.Group
@@ -76,7 +80,7 @@ useEffect(()=>{
               controlId="exampleForm.ControlTextarea1"
             >
               <Form.Label>Todo Description</Form.Label>
-              <Form.Control onChange={handleChange}  name='desceription' value={todoData.description} as="textarea" rows={3} />
+              <Form.Control onChange={handleChanges}  name='desceription' value={text} as="textarea" rows={3} />
             </Form.Group>
             <Form.Group
               className="mb-3"
