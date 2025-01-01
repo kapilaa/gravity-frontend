@@ -15,6 +15,10 @@ After clone successfull please run following command
 
 npm install
 
+Set API path 
+
+Set an API baseURL in constants.js file
+
 TO run this project please run following command
 
 npm start
