@@ -1,6 +1,7 @@
 import Table from 'react-bootstrap/Table';
 import EditModal from '../components/EditTodo';
 import DeleteModal from '../components/DeleteModal';
+import { Badge } from 'react-bootstrap';
 
 function TodoList({todoListData,getTodoList}) {
     return (
@@ -22,7 +23,8 @@ function TodoList({todoListData,getTodoList}) {
             <td>1</td>
             <td>{item.title}</td>
             <td>{item.description}</td>
-            <td>{item.isCompleted?'Completed':'pending'}</td>
+            <td>
+            {item.isCompleted?<Badge bg="success">Completed</Badge>:<Badge bg="warning">Pending</Badge>}</td>
             <td><EditModal getTodoList={getTodoList} itemData={item} /> <DeleteModal getTodoList={getTodoList} idToDelete={item._id} /></td>
           </tr>
                 ))

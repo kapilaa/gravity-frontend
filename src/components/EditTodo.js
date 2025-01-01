@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
@@ -8,11 +8,16 @@ import constants from '../constants';
 import { toast, Toaster } from 'react-hot-toast';
 
 function EditModal({itemData,getTodoList}) {
+  const token = localStorage.getItem('authToken');
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [error,setError]=useState('');
-  const [todoData, setTodoData] = useState(itemData);
+  const initialFormData = {
+    title: "",
+    description: "",
+  }
+  const [todoData, setTodoData] = useState(initialFormData);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,7 +30,9 @@ function EditModal({itemData,getTodoList}) {
   const todoUpdate=async(event)=>{
     
     event.preventDefault()
-    await axios.put(`${constants.baseURL}${TODO_UPDATE}${itemData._id}`,todoData)
+    await axios.put(`${constants.baseURL}${TODO_UPDATE}${itemData._id}`,todoData,{headers:{
+        Authorization:`Bearer ${token}`
+    }})
     .then((response) => {
           getTodoList()
           setShow(false)
@@ -38,7 +45,9 @@ function EditModal({itemData,getTodoList}) {
         });
 
   }
-
+useEffect(()=>{
+    setTodoData(itemData)
+},[])
   return (
     <>
       <Button  className='btn btn-success' variant="primary" onClick={handleShow}>
@@ -57,9 +66,8 @@ function EditModal({itemData,getTodoList}) {
                 value={todoData.title}
                 name='title'
                 type="text"
-                placeholder=""
                 onChange={handleChange}
-                autoFocus
+                
               />
             </Form.Group>
             <Form.Group

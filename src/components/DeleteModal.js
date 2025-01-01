@@ -8,11 +8,14 @@ import { TODO_DELETE } from '../api-routes';
 import { toast, Toaster } from 'react-hot-toast';
 
 function DeleteModal({idToDelete,getTodoList}) {
+  const token = localStorage.getItem('authToken');
   const [show, setShow] = useState(false);
   const [error,setError]=useState('');
   const deleteTodo=async(delete_id)=>{
     
-    await axios.delete(`${constants.baseURL}${TODO_DELETE}${delete_id}`)
+    await axios.delete(`${constants.baseURL}${TODO_DELETE}${delete_id}`,{headers:{
+      Authorization:`Bearer ${token}`
+  }})
     .then((response) => {
           getTodoList()
           setShow(false)
