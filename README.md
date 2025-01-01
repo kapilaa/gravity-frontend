@@ -6,7 +6,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 This is Toto task based project 
 In this is implemented on React, Node, Mongo, Express
-This is front repository which is created on react js
+This is frontend repository which is created on react js
 first clone this project by using this command 
 
 git clone https://github.com/kapilaa/gravity-frontend.git
