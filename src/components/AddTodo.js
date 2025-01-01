@@ -151,6 +151,7 @@ function TodoForm({getTodoList,setTodoList}) {
           });
     setTimeout(() => {
         localStorage.removeItem('authToken')
+        localStorage.removeItem('userData')  
         navigate('/login'); 
     }, 1000);
 
@@ -208,7 +209,7 @@ function TodoForm({getTodoList,setTodoList}) {
         </Col>
       </Row>
 
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>Add New Todo</Modal.Title>
         </Modal.Header>

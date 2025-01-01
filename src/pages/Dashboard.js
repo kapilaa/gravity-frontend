@@ -7,6 +7,7 @@ import constants from '../constants';
 import { TODO_LISTS } from '../api-routes';
 import PageLoader from '../components/page-loader';
 import { useNavigate } from 'react-router-dom';
+import { AUTH_TOKEN_CHECK } from '../api-routes';
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ function Dashboard() {
   const [error,setError]=useState('');
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem('authToken');
+  const userData = localStorage.getItem('userData');
+  
   const getTodoList=async()=>{
 
     await axios.get(`${constants.baseURL}${TODO_LISTS}`,{headers:{
@@ -28,9 +31,28 @@ function Dashboard() {
         });
        
   }
+  const checkValidToken=async()=>{
+
+    await axios.get(`${constants.baseURL}${AUTH_TOKEN_CHECK}`,{headers:{
+        Authorization:`Bearer ${token}`
+    }})
+    .then((response) => {
+        console.log(response.data.status)
+        if(response.data.status==false){
+            localStorage.removeItem('authToken')
+            localStorage.removeItem('userData')            
+            navigate('/login'); 
+        }
+        })
+        .catch((error) => {
+          setError('Error fetching data');  
+        });
+       
+  }
   useEffect(()=>{
     
     getTodoList()
+    checkValidToken()
     
   },[])
 
@@ -48,9 +70,9 @@ function Dashboard() {
 
   return (
     <div className="container">
+        <h5 style={{justifyContent:'center',alignItems:'center',display:'flex'}}>Hello <span style={{marginLeft:'5px'}}> <strong className='text text-success'> {JSON.parse(userData).name}</strong></span></h5>
        <TodoForm getTodoList={getTodoList} setTodoList={setTodoList}  />
        <TodoList  getTodoList={getTodoList}  todoListData={todoList} />
-    
     </div>
   );
 }
