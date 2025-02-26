@@ -11,68 +11,72 @@ import { AUTH_TOKEN_CHECK } from '../api-routes';
 
 function Dashboard() {
   const navigate = useNavigate();
-  const [todoList,setTodoList]=useState([])
-  const [error,setError]=useState('');
+  const [todoList, setTodoList] = useState([])
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem('authToken');
   const userData = localStorage.getItem('userData');
-  
-  const getTodoList=async()=>{
 
-    await axios.get(`${constants.baseURL}${TODO_LISTS}`,{headers:{
-        Authorization:`Bearer ${token}`
-    }})
-    .then((response) => {
-          setTodoList(response.data.data); 
-          setLoading(true)
-        })
-        .catch((error) => {
-          setError('Error fetching data');  
-        });
-       
+  const getTodoList = async () => {
+
+    await axios.get(`${constants.baseURL}${TODO_LISTS}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then((response) => {
+        setTodoList(response.data.data);
+        setLoading(true)
+      })
+      .catch((error) => {
+        setError('Error fetching data');
+      });
+
   }
-  const checkValidToken=async()=>{
+  const checkValidToken = async () => {
 
-    await axios.get(`${constants.baseURL}${AUTH_TOKEN_CHECK}`,{headers:{
-        Authorization:`Bearer ${token}`
-    }})
-    .then((response) => {
+    await axios.get(`${constants.baseURL}${AUTH_TOKEN_CHECK}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then((response) => {
         console.log(response.data.status)
-        if(response.data.status==false){
-            localStorage.removeItem('authToken')
-            localStorage.removeItem('userData')            
-            navigate('/login'); 
+        if (response.data.status == false) {
+          localStorage.removeItem('authToken')
+          localStorage.removeItem('userData')
+          navigate('/login');
         }
-        })
-        .catch((error) => {
-          setError('Error fetching data');  
-        });
-       
+      })
+      .catch((error) => {
+        setError('Error fetching data');
+      });
+
   }
-  useEffect(()=>{
-    
+  useEffect(() => {
+
     getTodoList()
     checkValidToken()
-    
-  },[])
 
-   useEffect(() => {
-      
-      if (!token) {
-        navigate('/login'); 
-      }
-    }, [navigate]);
+  }, [])
+
+  useEffect(() => {
+
+    if (!token) {
+      navigate('/login');
+    }
+  }, [navigate]);
 
   if (!loading) {
-    return<PageLoader />;
+    return <PageLoader />;
   }
 
 
   return (
     <div className="container">
-        <h5 style={{justifyContent:'center',alignItems:'center',display:'flex'}}>Hello <span style={{marginLeft:'5px'}}> <strong className='text text-success'> {JSON.parse(userData).name}</strong></span></h5>
-       <TodoForm getTodoList={getTodoList} setTodoList={setTodoList}  />
-       <TodoList  getTodoList={getTodoList}  todoListData={todoList} />
+      <h5 style={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}>Hello <span style={{ marginLeft: '5px' }}> <strong className='text text-success'> {JSON.parse(userData).name}</strong></span></h5>
+      <TodoForm getTodoList={getTodoList} setTodoList={setTodoList} />
+      <TodoList getTodoList={getTodoList} todoListData={todoList} />
     </div>
   );
 }
