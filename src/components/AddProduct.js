@@ -3,25 +3,43 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import axios from 'axios';
-import { AUTH_LOGOUT, TODO_ADD, TODO_SEARCH,TODO_STATUS_FILTER } from '../api-routes';
+import { AUTH_LOGOUT, PRODUCT_ADD, PRODUCT_SEARCH,PRODUCT_STATUS_FILTER } from '../api-routes';
 import constants from '../constants';
 import { toast, Toaster } from 'react-hot-toast';
 import { Row, Col } from 'react-bootstrap'; 
 import { useNavigate } from 'react-router-dom';
 
-function TodoForm({getTodoList,setTodoList}) {
+function TodoForm({getProductList,setProductList}) {
   const navigate=useNavigate()
   const token = localStorage.getItem('authToken');
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow  = () => setShow(true);
   const [selectedOption, setSelectedOption] = useState('');
-  
+  const [imageBase64, setImageBase64] = useState("");
   const [errors,setErrors]=useState('');
   const initialFormData = {
     title: "",
+    price: "",
+    category:"",
     description: "",
   }
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0]; // Get selected file
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file); // Convert image to Base64
+      reader.onload = () => {
+        setImageBase64(reader.result); // Store Base64 string in state
+      };
+      reader.onerror = (error) => {
+        console.log("Error: ", error);
+      };
+    }
+  };
+
+
   const [todoData, setTodoData] = useState(initialFormData);
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,15 +58,15 @@ function TodoForm({getTodoList,setTodoList}) {
     const searchVal= e.target.value;
     if(searchVal!=''){
     setErrors(''); 
-    await axios.post(`${constants.baseURL}${TODO_SEARCH}`,{search:searchVal},{headers:{
+    await axios.post(`${constants.baseURL}${PRODUCT_SEARCH}`,{search:searchVal},{headers:{
         Authorization:`Bearer ${token}`
     }})
     .then((response) => {
          if(response.data.success==false){  
-            setTodoList({}) 
+          setProductList({}) 
             setErrors(response.data.message); 
          }else{
-            setTodoList(response.data.data)
+          setProductList(response.data.data)
          }
         })
         .catch((error) => {
@@ -56,7 +74,7 @@ function TodoForm({getTodoList,setTodoList}) {
             console.log(errors) 
         });
     }else{
-        getTodoList()
+         getProductList()
     }
   }
   /**
@@ -74,18 +92,18 @@ function TodoForm({getTodoList,setTodoList}) {
     const getStatusVal=e.target.value;
     setSelectedOption(getStatusVal)
         if(getStatusVal=='all'){
-            getTodoList()
+          getProductList()
         }else{
-            await axios.post(`${constants.baseURL}${TODO_STATUS_FILTER}`,{status:getStatusVal},{headers:{
+            await axios.post(`${constants.baseURL}${PRODUCT_STATUS_FILTER}`,{status:getStatusVal},{headers:{
                 Authorization:`Bearer ${token}`
             }})
             .then((response) => {
                 
                 
                  if(response.data.success==false){  
-                    setTodoList({}) 
+                  setProductList({}) 
                  }else{
-                    setTodoList(response.data.data)
+                  setProductList(response.data.data)
                  }
                 })
                 .catch((error) => {
@@ -107,14 +125,15 @@ function TodoForm({getTodoList,setTodoList}) {
  * Start
  * Save todo 
  */
-  const todoSave=async(event)=>{
+  const saveProduct=async(event)=>{
     
     event.preventDefault()
-    await axios.post(`${constants.baseURL}${TODO_ADD}`,todoData,{headers:{
+    todoData.image=imageBase64
+    await axios.post(`${constants.baseURL}${PRODUCT_ADD}`,todoData,{headers:{
         Authorization:`Bearer ${token}`
     }})
     .then((response) => {
-          getTodoList()
+          getProductList()
           setShow(false)
           setErrors('')
           setTodoData(initialFormData)
@@ -170,7 +189,7 @@ function TodoForm({getTodoList,setTodoList}) {
   return (
     <>
       <Button variant="primary" onClick={handleShow}>
-        Add Todo
+        Add Product
       </Button>
 
       <Button style={{float:"right"}} variant="primary" onClick={logoutFunction}>
@@ -211,12 +230,12 @@ function TodoForm({getTodoList,setTodoList}) {
 
       <Modal show={show} onHide={handleClose} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Add New Todo</Modal.Title>
+          <Modal.Title>Add New Product</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={todoSave}>
+          <Form onSubmit={saveProduct}>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-              <Form.Label>Todo Name</Form.Label>
+              <Form.Label>Product Title</Form.Label>
               <Form.Control
                 className={`${errors.title ? 'is-invalid' : ''}`} 
                 onChange={handleChange}
@@ -227,12 +246,51 @@ function TodoForm({getTodoList,setTodoList}) {
               />
               {errors.title && <div className="invalid-feedback">{errors.title}</div>}
             </Form.Group>
+
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Product Price</Form.Label>
+              <Form.Control
+                className={`${errors.price ? 'is-invalid' : ''}`} 
+                onChange={handleChange}
+                name='price'
+                type="number"
+                placeholder=""
+                autoFocus
+              />
+              {errors.price && <div className="invalid-feedback">{errors.price}</div>}
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Category Category</Form.Label>
+              <Form.Control
+                className={`${errors.category ? 'is-invalid' : ''}`} 
+                onChange={handleChange}
+                name='category'
+                type="text"
+                placeholder=""
+                autoFocus
+              />
+              {errors.category && <div className="invalid-feedback">{errors.category}</div>}
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>Product Image</Form.Label>
+              <Form.Control
+                className={`${errors.image ? 'is-invalid' : ''}`} 
+                onChange={handleImageChange}
+                name='image'
+                type="file"
+                placeholder=""
+                autoFocus
+              />
+              {errors.image && <div className="invalid-feedback">{errors.image}</div>}
+            </Form.Group>
             <Form.Group
               
               className="mb-3"
               controlId="exampleForm.ControlTextarea1"
             >
-              <Form.Label>Todo Description</Form.Label>
+              <Form.Label>Product Description</Form.Label>
               <Form.Control
                  name='description'
                  onChange={handleChange}

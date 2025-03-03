@@ -12,7 +12,6 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [error,setError]=useState('')
   const [toaster,setToaster]=useState('')
-
   
   const handleSubmit =async (e) => {
     setError('')
@@ -25,7 +24,6 @@ const Register = () => {
           }else{
             setError('')
             setToaster(response.data.message+' Please wait....')
-            localStorage.setItem('authToken', response.data.auth_token);
             setTimeout(()=>{
                 navigateFunc()
             },2000)
@@ -49,7 +47,7 @@ const Register = () => {
   return (
     <>
     
-    <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: "80vh",backgroundImage: 'url(/login.jpg)' }}>
+    <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: "80vh",backgroundImage: 'url("https://img.freepik.com/free-vector/geometric-gradient-futuristic-background_23-2149116406.jpg")',backgroundRepeat  : 'no-repeat',backgroundSize: 'cover' }}>
       <Row className="w-100">
         <Col md={6} className="mx-auto">
           <div className="login-form p-4 border rounded shadow-sm">

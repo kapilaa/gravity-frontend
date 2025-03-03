@@ -20,6 +20,7 @@
     "react-bootstrap": "^2.10.7",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.4.1",
+    "react-native-fs": "^2.20.0",
     "react-router-dom": "^6.28.1",
     "react-scripts": "5.0.1",
     "react-toastify": "^11.0.2",

@@ -1,31 +1,32 @@
 import '../App.css';
-import TodoList from '../pages/TodoList';
-import TodoForm from '../components/AddTodo';
+import ProductList from '../pages/Products';
+import ProductForm from '../components/AddProduct';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import constants from '../constants';
-import { TODO_LISTS } from '../api-routes';
+import { PRODUCT_LISTS } from '../api-routes';
 import PageLoader from '../components/page-loader';
 import { useNavigate } from 'react-router-dom';
 import { AUTH_TOKEN_CHECK } from '../api-routes';
 
 function Dashboard() {
   const navigate = useNavigate();
-  const [todoList, setTodoList] = useState([])
+  const [productList, setProductList] = useState([])
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem('authToken');
   const userData = localStorage.getItem('userData');
 
-  const getTodoList = async () => {
+  const getProductList = async () => {
 
-    await axios.get(`${constants.baseURL}${TODO_LISTS}`, {
+    await axios.get(`${constants.baseURL}${PRODUCT_LISTS}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     })
       .then((response) => {
-        setTodoList(response.data.data);
+        console.log(response.data.data)
+        setProductList(response.data.data);
         setLoading(true)
       })
       .catch((error) => {
@@ -34,7 +35,7 @@ function Dashboard() {
 
   }
   const checkValidToken = async () => {
-
+   
     await axios.get(`${constants.baseURL}${AUTH_TOKEN_CHECK}`, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -54,9 +55,8 @@ function Dashboard() {
 
   }
   useEffect(() => {
-
-    getTodoList()
     checkValidToken()
+    getProductList()
 
   }, [])
 
@@ -74,9 +74,13 @@ function Dashboard() {
 
   return (
     <div className="container">
-      <h5 style={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}>Hello <span style={{ marginLeft: '5px' }}> <strong className='text text-success'> {JSON.parse(userData).name}</strong></span></h5>
-      <TodoForm getTodoList={getTodoList} setTodoList={setTodoList} />
-      <TodoList getTodoList={getTodoList} todoListData={todoList} />
+      <h5 style={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}>Hello
+         <span style={{ marginLeft: '5px' }}> 
+        <strong className='text text-success'> {JSON.parse(userData).name}</strong>
+        </span>
+      </h5>
+      <ProductForm getProductList={getProductList} setProductList={setProductList} />
+      <ProductList getProductList={getProductList} productListData={productList} />
     </div>
   );
 }
