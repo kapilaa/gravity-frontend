@@ -4,22 +4,22 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 import axios from 'axios';
 import constants from '../constants';
-import { TODO_DELETE } from '../api-routes';
+import { PRODUCT_DELETE } from '../api-routes';
 import { toast, Toaster } from 'react-hot-toast';
 
-function DeleteModal({idToDelete,getTodoList}) {
+function DeleteModal({idToDelete,getproductList}) {
   const token = localStorage.getItem('authToken');
   const [show, setShow] = useState(false);
   const [error,setError]=useState('');
-  const deleteTodo=async(delete_id)=>{
+  const deleteProduct=async(delete_id)=>{
     
-    await axios.delete(`${constants.baseURL}${TODO_DELETE}${delete_id}`,{headers:{
+    await axios.delete(`${constants.baseURL}${PRODUCT_DELETE}${delete_id}`,{headers:{
       Authorization:`Bearer ${token}`
   }})
     .then((response) => {
-          getTodoList()
+          getproductList()
           setShow(false)
-          toast.error('Todo deleted successfully!', {
+          toast.error('Product deleted successfully!', {
             autoClose: 3000,
           });
         })
@@ -40,11 +40,11 @@ function DeleteModal({idToDelete,getTodoList}) {
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Do you really want to delete this Todo</Modal.Title>
+          <Modal.Title>Do you really want to delete this Product</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form >
-          <Button variant="primary" onClick={()=>deleteTodo(idToDelete)}>
+          <Button variant="primary" onClick={()=>deleteProduct(idToDelete)}>
             Yes 
           </Button>
           <Button className="btn btn-danger" >
